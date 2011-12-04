@@ -67,6 +67,17 @@
       <artifactId>imagecomparison</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>net.avh4.framework</groupId>
+    	<artifactId>uilayer-core</artifactId>
+    	<version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.avh4.framework</groupId>
+    	<artifactId>uilayer-swing</artifactId>
+    	<version>1.0.1-SNAPSHOT</version>
+    	<scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -104,7 +115,7 @@
       <dependency>
         <groupId>net.avh4.util</groupId>
         <artifactId>imagecomparison</artifactId>
-        <version>0.0.4-SNAPSHOT</version>
+        <version>0.0.5</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
