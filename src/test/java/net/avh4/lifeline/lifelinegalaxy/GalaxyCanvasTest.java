@@ -39,4 +39,22 @@ public class GalaxyCanvasTest {
 		assertThat(subject, isApproved());
 	}
 
+	@Test
+	public void testForkedNodes() throws Exception {
+		subject = new GalaxyCanvas();
+		subject.addNode("Node 1", 400, 300, Color.RED);
+		subject.addNode("Node 2", 400, 150, Color.RED);
+		subject.addNode("Node 3", 500, 375, Color.RED);
+		assertThat(subject, isApproved());
+	}
+
+	@Test
+	public void testNodesInLine() throws Exception {
+		subject = new GalaxyCanvas();
+		subject.addNode("Node 1", 400, 300, Color.RED);
+		subject.addNode("Node 2", 400, 150, Color.RED);
+		subject.addNode("Node 3", 450, 175, Color.RED);
+		assertThat(subject, isApproved());
+	}
+
 }

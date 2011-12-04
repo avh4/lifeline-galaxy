@@ -1,5 +1,8 @@
 package net.avh4.lifeline.lifelinegalaxy;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import net.avh4.framework.uilayer.ClickReceiver;
 import net.avh4.framework.uilayer.Color;
 import net.avh4.framework.uilayer.SceneCreator;
@@ -13,9 +16,7 @@ import net.avh4.framework.uilayer.swing.scene.Font;
 public class GalaxyCanvas implements SceneCreator, ClickReceiver {
 
 	private final Scene scene;
-	private int lastX = -1;
-	private int lastY = -1;
-	private int lastColor = 0x00000000;
+	private final HashMap<Integer, ArrayList<Node>> lastNodeForColor = new HashMap<Integer, ArrayList<Node>>();
 	private int nodeCount = 0;
 	private static final int NODE_WIDTH = 5;
 
@@ -36,18 +37,43 @@ public class GalaxyCanvas implements SceneCreator, ClickReceiver {
 
 	public void addNode(final String label, final int x, final int y,
 			final int color) {
-		if (lastColor == color) {
-			scene.add(new SceneLine(Color.darken(.5, color), interpolate(lastX,
-					x, .9), interpolate(lastY, y, .9),
-					interpolate(x, lastX, .9), interpolate(y, lastY, .9)));
+		final Node node = getClosestNode(x, y, color);
+		if (node != null) {
+			scene.add(new SceneLine(Color.darken(.5, color), interpolate(
+					node.x, x, .9), interpolate(node.y, y, .9), interpolate(x,
+					node.x, .9), interpolate(y, node.y, .9)));
 		}
 		scene.add(new SceneOval(x - NODE_WIDTH / 2, y - NODE_WIDTH / 2,
 				NODE_WIDTH, NODE_WIDTH, color));
 		scene.add(new SceneLabel(label, x + NODE_WIDTH / 2, y + NODE_WIDTH / 2,
 				Font.PFENNIG, 12, color));
-		lastX = x;
-		lastY = y;
-		lastColor = color;
+		addNode(x, y, color);
+	}
+
+	private void addNode(final int x, final int y, final int color) {
+		if (lastNodeForColor.get(color) == null) {
+			lastNodeForColor.put(color, new ArrayList<Node>());
+		}
+		lastNodeForColor.get(color).add(new Node(x, y, color));
+	}
+
+	private Node getClosestNode(final int x, final int y, final int color) {
+		final ArrayList<Node> points = lastNodeForColor.get(color);
+		if (points == null) {
+			return null;
+		}
+		// Find the closest point from the list
+		Node closest = null;
+		double closestDistance = Double.MAX_VALUE;
+		for (final Node n : points) {
+			final double distance = Math.sqrt((n.x - x) * (n.x - x) + (n.y - y)
+					* (n.y - y));
+			if (distance < closestDistance) {
+				closestDistance = distance;
+				closest = n;
+			}
+		}
+		return closest;
 	}
 
 	private int interpolate(final int to, final int from, final double percent) {
@@ -56,8 +82,8 @@ public class GalaxyCanvas implements SceneCreator, ClickReceiver {
 
 	@Override
 	public void click(final int x, final int y) {
-		addNode("Node " + nodeCount, x, y, Color.RED);
+		addNode("Node " + nodeCount, x, y, (nodeCount % 2 == 0) ? Color.RED
+				: Color.BLUE);
 		nodeCount++;
 	}
-
 }
